@@ -4,6 +4,8 @@
 
 Red Hat provides OpenShift Pipelines based on Tekton for CI/CD implementation on OpenShift. Customers who are using OpenShift can utilize the OpenShift Pipelines for integrated CI/CD implementation. However, many organizations are still using Jenkins for their CI/CD engine, this document outlines the necessary steps to enable the Red Hat Developer Hub and Jenkins integration.
 
+> Note: This guide is meant to create a demo environment, many of the configurations are not recommended for production usage.
+
 ## Installing Red Hat Developer Hub
 
 You can install Red Hat Developer Hub using Operator and [Helm Chart](https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.3/html/installing_red_hat_developer_hub_on_openshift_container_platform/index#assembly-install-rhdh-ocp-helm). This guide will follow the steps in Red Hat product documentation to install Red Hat Developer Hub using Operator.
@@ -36,7 +38,7 @@ Please follow the [Installing Red Hat Developer Hub on OpenShift Container Platf
 
 **Adding Custom Configuration File**
 
-To quickly setup the demo, we going to enable guest access RHDH.
+To quickly setup the demo, we are going to enable guest access RHDH.
 
 1. Generate a base64 encoded string as a value. Use a unique value for each Red Hat Developer Hub instance. For example, you can use the following command to generate a key from your terminal:
 
@@ -93,7 +95,7 @@ To quickly setup the demo, we going to enable guest access RHDH.
                 environment: development
                 providers:
                     guest:
-                    dangerouslyAllowOutsideDevelopment: true
+                        dangerouslyAllowOutsideDevelopment: true
             backend:
                 auth:
                     externalAccess:
@@ -112,7 +114,7 @@ To quickly setup the demo, we going to enable guest access RHDH.
     oc apply -f deployment/app-config-rhdh.yaml
     ```
 
-4. Wait for the RHDH pod to restart and ready. Navigate to the URL and click on `Guest` button to login
+4. Wait for the RHDH pod to restart and ready. Navigate to the URL and click on `Guest` button to login. Click on `Settings` menu and you can see you are login as guest account.
 
     <br>
 
@@ -123,7 +125,7 @@ To quickly setup the demo, we going to enable guest access RHDH.
 
 The Jenkins plugin is pre-installed with RHDH but it is disabled by default. You need to enable it.
 
-1. Generate base64 code string for Jenkins server URL, Jenkins username, Jenkins token using. The following show the example command to generate the Jenkins URL
+1. Generate base64 code string for Jenkins server URL, Jenkins username and Jenkins token. The following show the example command to generate the Jenkins URL
 
     ```
     echo -n 'https://jenkins-demo-project.apps.sno.ocp.internal' | base64
@@ -131,7 +133,7 @@ The Jenkins plugin is pre-installed with RHDH but it is disabled by default. You
 
     Use these generated base64 code string for the next step.
 
-2. Update the OpenShift secret created earlier `secrets-rhdh` with the base63 code string for Jenkins:
+2. Update the OpenShift secret created earlier `secrets-rhdh` with the base63 code string for Jenkins. You do this on the Openshift admin console.
 
     ```yaml
     kind: Secret
@@ -154,7 +156,7 @@ The Jenkins plugin is pre-installed with RHDH but it is disabled by default. You
 2. Create the following ConfigMap to enable Jenkins plugin and apply it in the same project as the RHDH. 
 
     > Note: 
-    > - For RHDH, environmental variables in the configuration must be configured in OpenShift secret as per the previous step for `secrets-rhdh`.
+    > - For RHDH, environmental variables in the previous `ConfigMap` must be configured in OpenShift `secret` as per the previous step in `secrets-rhdh`.
     > - Make sure you change the Jenkins instance's name to `default-jenkins`. This is to ensure it match the sample `Catalog` that we are going to create in the next step
 
     ```yaml
